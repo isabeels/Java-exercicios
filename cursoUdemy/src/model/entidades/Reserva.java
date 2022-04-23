@@ -4,12 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.excecoes.DataInvalidaException;
+
 public class Reserva {
 
 	private Integer numQuarto;
 	private Date checkIn;
 	private Date checkOut;
 	
+	Date now = new Date();
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
 	public Reserva() {
@@ -43,9 +46,27 @@ public class Reserva {
 		return TimeUnit.DAYS.convert(periodo, TimeUnit.MILLISECONDS);
 	}
 	
-	public void alterarData (Date checkIn, Date checkOut) {
+	public void alterarData (Date checkIn, Date checkOut) throws DataInvalidaException {
+		
+		if(checkIn.before(now) || (checkOut.before(now))) {
+			throw new DataInvalidaException("As datas não podem ser anteriores ao dia de hoje");
+		}
+		if (!checkOut.after(checkIn)) {
+			throw new DataInvalidaException("O checkout não pode ser antes do checkin");
+		}
+		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+	}
+	
+	public void verificarData()throws DataInvalidaException {
+		
+		if(checkIn.before(now) || (checkOut.before(now))) {
+			throw new DataInvalidaException("As datas não podem ser anteriores ao dia de hoje");
+		}
+		if (!checkOut.after(checkIn)) {
+			throw new DataInvalidaException("O checkout não pode ser antes do checkin");
+		}
 	}
 
 	@Override
